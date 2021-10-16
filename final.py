@@ -1,10 +1,12 @@
 # Import definition
 from scipy.io import arff
+from scipy.stats import ttest_ind
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import MultinomialNB
 
 # Constants definition
 GROUP_NUMBER = 16  # Our group number
@@ -119,5 +121,47 @@ for n in NEIGHBOURS:
 
 # ---------------------------------------------------- QUESTION 7 ---------------------------------------------------- #
 
+# Holds accuracy for each model to be latter used in t-test
+knn_acc = []
+gnb_acc = []
+
+# Creates a k fold cross validator
+skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=GROUP_NUMBER)
+
+# Creates KNN classifier for 3 neighbours
+knn = KNeighborsClassifier(3, weights="uniform", p=2, metric="minkowski")
+
+# Creates a Multinomial Naive Bayes classifier (since the question tells us to use "multinomial assumption")
+gnb = MultinomialNB()
+
+# For each train/test set, we use a KNN classifier
+for train_index, test_index in skf.split(X, y):
+
+    # Uses indexes to fetch which values are going to be used to train and test
+    X_train, X_test = X[train_index], X[test_index]
+    y_train, y_test = y[train_index], y[test_index]
+
+    # Trains knn classifier
+    knn.fit(X_train, y_train.ravel())
+
+    # Uses testing data and gets model accuracy
+    acc = knn.score(X_test, y_test)
+
+    # Appends accuracy to be latter used as input in a t-test to compare with gnb
+    knn_acc.append(acc)
+
+    # Trains gnb classifier
+    gnb.fit(X_train, y_train.ravel())
+
+    # Uses testing data and gets model accuracy
+    acc = gnb.score(X_test, y_test)
+
+    # Appends accuracy to be latter used as input in a t-test to compare with knn
+    gnb_acc.append(acc)
+
+# Uses a t-test to compare both models and determine which one is better
+statistic, p_value = ttest_ind(knn_acc, gnb_acc, nan_policy="omit", alternative="greater")
+
+print(f"statistic: {statistic} | p_value: {p_value}")
 
 # ---------------------------------------------------- QUESTION 8 ---------------------------------------------------- #
