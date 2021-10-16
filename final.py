@@ -160,6 +160,6 @@ for train_index, test_index in skf.split(X, y):
     mnb_acc.append(acc)
 
 # Uses a t-test to compare both models and determine which one is better
-statistic, p_value = ttest_ind(knn_acc, mnb_acc, nan_policy="omit", alternative="greater")
+statistic, p_value = ttest_ind(knn_acc, mnb_acc, nan_policy="omit", alternative="two-sided")
 
 print(f"statistic: {statistic} | p_value: {p_value}")
