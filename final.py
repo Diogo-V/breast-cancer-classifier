@@ -123,7 +123,7 @@ for n in NEIGHBOURS:
 
 # Holds accuracy for each model to be latter used in t-test
 knn_acc = []
-gnb_acc = []
+mnb_acc = []
 
 # Creates a k fold cross validator
 skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=GROUP_NUMBER)
@@ -132,7 +132,7 @@ skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=GROUP_NUMBER)
 knn = KNeighborsClassifier(3, weights="uniform", p=2, metric="minkowski")
 
 # Creates a Multinomial Naive Bayes classifier (since the question tells us to use "multinomial assumption")
-gnb = MultinomialNB()
+mnb = MultinomialNB()
 
 # For each train/test set, we use a KNN classifier
 for train_index, test_index in skf.split(X, y):
@@ -151,15 +151,15 @@ for train_index, test_index in skf.split(X, y):
     knn_acc.append(acc)
 
     # Trains gnb classifier
-    gnb.fit(X_train, y_train.ravel())
+    mnb.fit(X_train, y_train.ravel())
 
     # Uses testing data and gets model accuracy
-    acc = gnb.score(X_test, y_test)
+    acc = mnb.score(X_test, y_test)
 
     # Appends accuracy to be latter used as input in a t-test to compare with knn
-    gnb_acc.append(acc)
+    mnb_acc.append(acc)
 
 # Uses a t-test to compare both models and determine which one is better
-statistic, p_value = ttest_ind(knn_acc, gnb_acc, nan_policy="omit", alternative="greater")
+statistic, p_value = ttest_ind(knn_acc, mnb_acc, nan_policy="omit", alternative="greater")
 
 print(f"statistic: {statistic} | p_value: {p_value}")
