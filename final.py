@@ -163,5 +163,3 @@ for train_index, test_index in skf.split(X, y):
 statistic, p_value = ttest_ind(knn_acc, gnb_acc, nan_policy="omit", alternative="greater")
 
 print(f"statistic: {statistic} | p_value: {p_value}")
-
-# ---------------------------------------------------- QUESTION 8 ---------------------------------------------------- #
