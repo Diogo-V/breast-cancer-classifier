@@ -2,6 +2,8 @@
 from scipy.io import arff
 from scipy.stats import ttest_ind
 import pandas as pd
+import numpy as np
+import math
 import matplotlib.pyplot as plt
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelBinarizer
@@ -91,6 +93,10 @@ plt.show()
 # We need to create a classifier for each number of neighbours
 for n in NEIGHBOURS:
 
+    # Holds training and testing accuracy to be latter used to determine which K is more susceptible to over fit
+    train_acc = []
+    test_acc = []
+
     print(f"Classifying n = {n}:")
 
     # Creates a k fold cross validator
@@ -116,6 +122,15 @@ for n in NEIGHBOURS:
         # Uses training data and gets model training accuracy to determine and analise over-fitting
         acc = clf.score(X_train, y_train)
         print(f"Acc using training data {acc}")
+
+    # Calculates means for train and test to determine which one is over fitting less
+    train_mean = sum(train_acc) / 10
+    test_mean = sum(test_acc) / 10
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
+    print(f"Training acc: {train_mean}")
+    print(f"Test acc: {test_mean}")
+    print(f"Diff: {train_mean - test_mean}")
+    print(f"RMSE: {error}")
 
     print("\n")
 
