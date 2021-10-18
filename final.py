@@ -117,20 +117,22 @@ for n in NEIGHBOURS:
 
         # Uses testing data and gets model accuracy
         acc = clf.score(X_test, y_test)
-        print(f"Acc using test data {acc}")
+        test_acc.append(acc)
+        print("Acc using test data {:.3f}".format(acc))
 
-        # Uses training data and gets model training accuracy to determine and analise over-fitting
+        # Uses training data and gets model accuracy to determine over fitting
         acc = clf.score(X_train, y_train)
-        print(f"Acc using training data {acc}")
+        train_acc.append(acc)
+        print("Acc using training data {:.3f}".format(acc))
 
     # Calculates means for train and test to determine which one is over fitting less
     train_mean = sum(train_acc) / 10
     test_mean = sum(test_acc) / 10
     error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
-    print(f"Training acc: {train_mean}")
-    print(f"Test acc: {test_mean}")
-    print(f"Diff: {train_mean - test_mean}")
-    print(f"RMSE: {error}")
+    print("Training acc: {:.3f}".format(train_mean))
+    print("Test acc: {:.3f}".format(test_mean))
+    print("Diff: {:.3f}".format(train_mean - test_mean))
+    print("RMSE: {:.3f}".format(error))
 
     print("\n")
 
